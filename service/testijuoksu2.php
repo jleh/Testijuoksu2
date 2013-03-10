@@ -78,12 +78,23 @@ function event_list(){
  * @param type $event_id
  */
 function list_results($event_id){
+    echo json_encode(get_results_for_event($event_id));
+}
+
+/**
+ * Returns list of results for event id.
+ * @param type $event_id
+ * @return type
+ */
+function get_results_for_event($event_id){
     include('yhteys.php');
 
     // Select all runners from event
-    $sql = "SELECT SUM( TIME_TO_SEC( split_time ) ) AS time , SUM(split_number) AS roundSum, runner, name, sex
+    $sql = "SELECT SUM( TIME_TO_SEC( split_time ) ) AS time , SUM(split_number) AS roundSum,
+            runner, name, sex, DATE_FORMAT( event_date, '%d.%m.%Y' ) AS event_date
             FROM  testijuoksu2_split 
             LEFT JOIN testijuoksu2_runner ON testijuoksu2_split.runner=testijuoksu2_runner.id
+            LEFT JOIN testijuoksu2_event ON testijuoksu2_split.event=testijuoksu2_event.id
             WHERE event = ?
             GROUP BY runner
             ORDER BY roundSum DESC, time ASC";
@@ -114,11 +125,12 @@ function list_results($event_id){
             "total_time" => $total_time,
             "total_time_sec" => $row['time'],
             "splits" => $splits,
-            "pace" => gmdate("i:s", (int)($row['time'] / (count($splits)*(2.57))))
+            "pace" => gmdate("i:s", (int)($row['time'] / (count($splits)*(2.57)))),
+            "event" => $row['event_date']
         );
     }
     
-    echo json_encode($list);
+    return $list;
 }
 
 function list_runners() {
@@ -241,45 +253,16 @@ function list_runner_times($runner_id){
 function list_all_results(){
     include('yhteys.php');
 
-    // Select all runners from event
-    $sql = "SELECT SUM( TIME_TO_SEC( split_time ) ) AS time , SUM(split_number) AS roundSum, 
-            runner, name, sex, event, event_date, DATE_FORMAT(event_date, '%d.%m.%Y') AS event_date_formatted
-            FROM  testijuoksu2_split 
-            LEFT JOIN testijuoksu2_runner ON testijuoksu2_split.runner=testijuoksu2_runner.id
-            LEFT JOIN testijuoksu2_event ON testijuoksu2_split.event=testijuoksu2_event.id
-            GROUP BY runner
-            ORDER BY event_date DESC, roundSum DESC, time DESC";
+    // Get list of event ids
+    $sql = "SELECT id FROM testijuoksu2_event ORDER BY event_date DESC";
     $query = $yhteys->prepare($sql);
-    $query->execute(array($event_id));
+    $query->execute();
     
-    $list = array();
+    $list;
     while($row = $query->fetch()){
-        $runner_id = $row['runner'];
-        $runner_name = $row['name'];
-        $event_id = $row['event'];
-        $sex = $row['sex'];
-        $total_time = gmdate("i:s", $row['time']);
-        
-        $sql = "SELECT split_number, TIME_TO_SEC( split_time ) AS split_time 
-                FROM testijuoksu2_split WHERE runner = ? AND event = ?";
-        $query2 = $yhteys->prepare($sql);
-        $query2->execute(array($runner_id, $event_id));
-        
-        $splits = array();
-        while($row2 = $query2->fetch()){
-            $splits[] = array("round" => $row2['split_number'],
-                              "time" => gmdate("i:s", $row2['split_time']));
+        foreach (get_results_for_event($row['id']) as $row2) {
+            $list[] = $row2;
         }
-        
-        $list[] = array(
-            "event" => $row['event_date_formatted'],
-            "name" => $runner_name,
-            "sex" =>  $sex,
-            "total_time" => $total_time,
-            "total_time_sec" => $row['time'],
-            "splits" => $splits,
-            "pace" => gmdate("i:s", (int)($row['time'] / (count($splits)*(2.57))))
-        );
     }
     
     echo json_encode($list);
