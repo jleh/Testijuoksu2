@@ -5,6 +5,7 @@ $(document).ready(function() {
   $("#addRunnerButton").click(function() { addRunner(); });
   $("#addEventButton").click(function() { addEvent(); });
   $("#addResultButton").click(function() { addResult(); });
+  $("#listAllResults").click(function() { listAllResults(); });
 });
 
 var resultData;
@@ -41,7 +42,7 @@ function changeRunner(){
 
 function loadEventResults(id){
   $.getJSON("service/testijuoksu2.php?query=eventresults&eventId=" + id, function(data){
-    renderResults(data);
+    renderResults(data, $("#eventResults"));
     // Save loaded data
     resultData = data;
   });
@@ -49,19 +50,21 @@ function loadEventResults(id){
 
 function loadRunnerResults(id){
   $.getJSON("service/testijuoksu2.php?query=runner&runnerId=" + id, function(data){
-    renderResults(data);
+    renderResults(data, $("#runnerResults"));
     // Save loaded data
     resultData = data;
   });
 }
 
 /**
- * Render result table from given data.
+ * Render result table from given data to selected template.
  * @param {type} data
+ * @param {type} $template
+ * @returns {undefined}
  */
-function renderResults(data) {
+function renderResults(data, $template) {
   var result = {results: data};
-  var html = Mustache.render($("#runnerResults").html(), result);
+  var html = Mustache.render($template.html(), result);
   $("#results").html(html);
 }
 
@@ -131,5 +134,14 @@ function addResult() {
     
     $("#view select").val('');
     $("#view select").val(result.event);
+  });
+}
+
+
+function listAllResults() {
+  $.getJSON("service/testijuoksu2.php?query=allResults", function(data){
+    renderResults(data, $("#allResults"));
+    // Save loaded data
+    resultData = data;
   });
 }

@@ -11,11 +11,20 @@
   <body>
     <img id="banneri" src="banneri.jpg" alt="Alueen testijuoksu"><br>
     
-    Tapahtuma:
-    <div id="view"></div>
+    <div id="menu">
+      <div class="menuitem">
+        Tapahtuma:
+        <div id="view"></div>
+      </div>
+
+      <div class="menuitem">
+        Juoksija:
+        <div id="runners"></div>
+      </div>
+      
+      <a href="#" id="listAllResults" class="menuitem">Kaikki tulokset</a>
+    </div>
     
-    Juoksija:
-    <div id="runners"></div>
     
     <div id="results"></div>
     
@@ -61,7 +70,7 @@
     </div>
     
     <div class="hidden">
-      
+      <!-- Templates -->
       <div id="eventList">
         <select id="evetSelector">
           <option>Valitse</option>
@@ -111,6 +120,28 @@
         {{#results}}
           <div class="resultRow">
             <div class="resultCell">{{event}}</div>
+            <div class="resultCell"><strong>{{total_time}}</strong></div>
+            {{#splits}}
+              <div class="resultCell">{{time}}</div>
+            {{/splits}}
+            <div class="resultCell"><strong>{{pace}} min/km</strong></div>
+          </div>
+        {{/results}}
+      </div>
+      
+      <div id="allResults">
+        <div class="resultRow">
+          <div class="resultCell header">Päivä</div>
+          <div class="resultCell header">Nimi</div>
+          <div class="resultCell header time">Aika</div>
+          <div class="resultCell header">Kierros 1</div>
+          <div class="resultCell header">Kierros 2</div>
+          <div class="resultCell header">Kierros 3</div>
+        </div>
+        {{#results}}
+          <div class="resultRow">
+            <div class="resultCell">{{event}}</div>
+            <div class="resultCell">{{name}}</div>
             <div class="resultCell"><strong>{{total_time}}</strong></div>
             {{#splits}}
               <div class="resultCell">{{time}}</div>

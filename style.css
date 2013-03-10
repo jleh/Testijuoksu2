@@ -15,6 +15,10 @@ body {
   font-size: 100%;
 }
 
+a:visited {
+  color: blue;
+}
+
 .hidden {
   display: none;
 }
@@ -44,4 +48,8 @@ body {
 
 .resultCell.header {
   font-weight: bold;
+}
+
+.menuitem {
+  display: inline-block;
 }

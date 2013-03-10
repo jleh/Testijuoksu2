@@ -21,6 +21,8 @@ if($param == "addResult")
     add_result($_REQUEST['data']);
 if($param == "runner")
     list_runner_times($_REQUEST['runnerId']);
+if($param == "allResults")
+    list_all_results();
 
 /**
  * Lists all events from newest to oldest.
@@ -193,6 +195,57 @@ function list_runner_times($runner_id){
             "event" => $row['event_date_formatted'],
             "time_in_sec" => $row['time'],
             "total_time" => $total_time,
+            "splits" => $splits,
+            "pace" => gmdate("i:s", (int)($row['time'] / (count($splits)*(2.57))))
+        );
+    }
+    
+    echo json_encode($list);
+}
+
+/**
+ * Lists results  from all events.
+ * @param type $event_id
+ */
+function list_all_results(){
+    include('yhteys.php');
+
+    // Select all runners from event
+    $sql = "SELECT SUM( TIME_TO_SEC( split_time ) ) AS time , SUM(split_number) AS roundSum, 
+            runner, name, sex, event, event_date, DATE_FORMAT(event_date, '%d.%m.%Y') AS event_date_formatted
+            FROM  testijuoksu2_split 
+            LEFT JOIN testijuoksu2_runner ON testijuoksu2_split.runner=testijuoksu2_runner.id
+            LEFT JOIN testijuoksu2_event ON testijuoksu2_split.event=testijuoksu2_event.id
+            GROUP BY runner
+            ORDER BY event_date DESC, roundSum DESC, time DESC";
+    $query = $yhteys->prepare($sql);
+    $query->execute(array($event_id));
+    
+    $list = array();
+    while($row = $query->fetch()){
+        $runner_id = $row['runner'];
+        $runner_name = $row['name'];
+        $event_id = $row['event'];
+        $sex = $row['sex'];
+        $total_time = gmdate("i:s", $row['time']);
+        
+        $sql = "SELECT split_number, TIME_TO_SEC( split_time ) AS split_time 
+                FROM testijuoksu2_split WHERE runner = ? AND event = ?";
+        $query2 = $yhteys->prepare($sql);
+        $query2->execute(array($runner_id, $event_id));
+        
+        $splits = array();
+        while($row2 = $query2->fetch()){
+            $splits[] = array("round" => $row2['split_number'],
+                              "time" => gmdate("i:s", $row2['split_time']));
+        }
+        
+        $list[] = array(
+            "event" => $row['event_date_formatted'],
+            "name" => $runner_name,
+            "sex" =>  $sex,
+            "total_time" => $total_time,
+            "total_time_sec" => $row['time'],
             "splits" => $splits,
             "pace" => gmdate("i:s", (int)($row['time'] / (count($splits)*(2.57))))
         );
