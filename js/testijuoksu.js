@@ -5,7 +5,8 @@ $(document).ready(function() {
   $("#addRunnerButton").click(function() { addRunner(); });
   $("#addEventButton").click(function() { addEvent(); });
   $("#addResultButton").click(function() { addResult(); });
-  $("#listAllResults").click(function() { listAllResults(); });
+  $("#listAllResults").click(function() { listAllResults(); return false; });
+  $(".splitTimeInput").keypress(function(e) { splitTimeFormat(e); });
 });
 
 var resultData;
@@ -144,4 +145,11 @@ function listAllResults() {
     // Save loaded data
     resultData = data;
   });
+}
+
+function splitTimeFormat(event){
+  console.log(event);
+  if(event.target.value.length == 2 && event.keyCode != 8){
+    event.target.value += ':';
+  }
 }
