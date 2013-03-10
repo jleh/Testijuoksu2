@@ -1,0 +1,47 @@
+/* 
+    Document   : style
+    Created on : Mar 9, 2013, 1:54:25 PM
+    Author     : jleh
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+root { 
+  display: block;
+}
+
+body {
+  font-family: Arial;
+  font-size: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+#banneri {
+  max-width: 100%;
+}
+
+.addForm {
+  display: inline-block;
+}
+
+#forms {
+  position: absolute;
+  bottom: 2em;
+}
+
+.resultRow {
+  display: table-row;
+  border-bottom: 1px solid black; 
+}
+
+.resultCell {
+  display: table-cell;
+  padding-right: 1.5em;
+}
+
+.resultCell.header {
+  font-weight: bold;
+}

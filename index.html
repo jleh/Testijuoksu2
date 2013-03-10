@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Alueen testijuoksu</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="js/mustache.js"></script>
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="js/testijuoksu.js"></script>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <img id="banneri" src="banneri.jpg" alt="Alueen testijuoksu"><br>
+    
+    Tapahtuma:
+    <div id="view"></div>
+    
+    Juoksija:
+    <div id="runners"></div>
+    
+    <div id="results"></div>
+    
+    
+    <div id="forms">
+      <div id="addRunner" class="addForm">
+        <h3>Lisää juoksija</h3>
+        <div id="statusText"></div>
+        <label>Nimi</label>
+        <input type="text" id="runnerName"><br>
+        <select id="runnerSex">
+          <option value="M">Mies</option>
+          <option value="F">Nainen</option>
+        </select><br>
+        <button id="addRunnerButton">Lisää</button>
+      </div>
+
+      <div id="addEvent" class="addForm">
+        <h3>Lisää tapahtuma</h3>
+        <div id="statusTextEvent"></div>
+        <label>Päivämäärä: </label>
+        <input id="eventDate" type="text" placeholder="pp.kk.vvvv"><br>
+        <button id="addEventButton">Lisää</button>
+      </div>
+      
+      <div id="addResult" class="addForm">
+        <h3>Lisää tulos</h3>
+        <div id="statusTextResult"></div>
+        
+        <label>Tapahtuma: </label>
+        <div id="addResultEvent"></div><br>
+        
+        <label>Juoksija: </label>
+        <div id="addResultRunner"></div><br>
+        
+        <input type="text" id="split1" placeholder="MM:SS"><br>
+        <input type="text" id="split2" placeholder="MM:SS"><br>
+        <input type="text" id="split3" placeholder="MM:SS"><br>
+        <input type="text" id="split4" placeholder="MM:SS"><br>
+        
+        <button id="addResultButton">Lisää</button>
+      </div>
+    </div>
+    
+    <div class="hidden">
+      
+      <div id="eventList">
+        <select id="evetSelector">
+          <option>Valitse</option>
+          {{#events}}
+          <option value="{{id}}">{{event_date}}</option>
+          {{/events}}
+        </select>
+      </div>
+      
+      <div id="runnerList">
+        <select id="runnerSelector">
+          <option>Valitse</option>
+          {{#runners}}
+          <option value="{{id}}">{{name}}</option>
+          {{/runners}}
+        </select>
+      </div>
+      
+      <div id="eventResults">
+        <div class="resultRow">
+          <div class="resultCell header">Nimi</div>
+          <div class="resultCell header">Aika</div>
+          <div class="resultCell header">Kierros 1</div>
+          <div class="resultCell header">Kierros 2</div>
+          <div class="resultCell header">Kierros 3</div>
+        </div>
+        {{#results}}
+          <div class="resultRow">
+            <div class="resultCell">{{name}}</div>
+            <div class="resultCell"><strong>{{total_time}}</strong></div>
+            {{#splits}}
+              <div class="resultCell">{{time}}</div>
+            {{/splits}}
+            <div class="resultCell"><strong>{{pace}} min/km</strong></div>
+          </div>
+        {{/results}}
+      </div>
+      
+      <div id="runnerResults">
+        <div class="resultRow">
+          <div class="resultCell header">Päivä</div>
+          <div class="resultCell header">Aika</div>
+          <div class="resultCell header">Kierros 1</div>
+          <div class="resultCell header">Kierros 2</div>
+          <div class="resultCell header">Kierros 3</div>
+        </div>
+        {{#results}}
+          <div class="resultRow">
+            <div class="resultCell">{{event}}</div>
+            <div class="resultCell"><strong>{{total_time}}</strong></div>
+            {{#splits}}
+              <div class="resultCell">{{time}}</div>
+            {{/splits}}
+            <div class="resultCell"><strong>{{pace}} min/km</strong></div>
+          </div>
+        {{/results}}
+      </div>
+    </div>
+  </body>
+</html>
