@@ -53,3 +53,7 @@ a:visited {
 .menuitem {
   display: inline-block;
 }
+
+#menu {
+  margin-bottom: 1em;
+}

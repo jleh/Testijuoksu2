@@ -6,6 +6,7 @@
     <script src="js/mustache.js"></script>
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
     <script src="js/testijuoksu.js"></script>
+    <script src="js/monent.js"></script>
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
@@ -34,7 +35,7 @@
         <h3>Lisää juoksija</h3>
         <div id="statusText"></div>
         <label>Nimi</label>
-        <input type="text" id="runnerName"><br>
+        <input type="text" id="runnerName" placeholder="Etunimi Sukunimi"><br>
         <select id="runnerSex">
           <option value="M">Mies</option>
           <option value="F">Nainen</option>
@@ -65,6 +66,9 @@
         <input type="text" id="split3" class="splitTimeInput" placeholder="MM:SS"><br>
         <input type="text" id="split4" class="splitTimeInput" placeholder="MM:SS"><br>
         
+        <input type="checkbox" id="cumulativeTimes" name="cumulativeTimes" value="ON" checked="checked" />
+        Kumulatiiviset ajat<br>
+        
         <button id="addResultButton">Lisää</button>
       </div>
     </div>
@@ -73,7 +77,7 @@
       <!-- Templates -->
       <div id="eventList">
         <select id="evetSelector">
-          <option>Valitse</option>
+          <option value="">Valitse</option>
           {{#events}}
           <option value="{{id}}">{{event_date}}</option>
           {{/events}}
@@ -82,7 +86,7 @@
       
       <div id="runnerList">
         <select id="runnerSelector">
-          <option>Valitse</option>
+          <option value="">Valitse</option>
           {{#runners}}
           <option value="{{id}}">{{name}}</option>
           {{/runners}}
@@ -150,6 +154,19 @@
           </div>
         {{/results}}
       </div>
+      
+      <div id="records">
+        <h2>Ennätyksiä</h2>
+        <strong>Nopein 3 kierrosta:</strong> {{name3}} {{time3}} {{date3}}<br>
+        <strong>Nopein 2 kierrosta:</strong> {{name2}} {{time2}} {{date2}}<br>
+        <strong>Nopein 1 kierrosta:</strong> {{name1}} {{time1}} {{date1}}<br>
+        
+        <h2>TOP 10 enitien juoksukertoja</h2>
+        {{#top10}}
+          {{name}}
+        {{/top10}}
+      </div>
+      
     </div>
   </body>
 </html>

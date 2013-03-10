@@ -119,7 +119,39 @@ function addResult() {
     split4: $("#split4").val()
   };
   
-  if($("#split1").val() == "")
+  // If times are given in cumulative form, do handling here
+  if($("#cumulativeTimes").is(":checked") && result.split2 != ""){ // Don't handle one lap situation
+    // TODO: Refactor this shit!
+    result.split1 = moment(result.split1, "mm:ss");
+    result.split2 = moment(result.split2, "mm:ss");
+    result.split3 = moment(result.split3, "mm:ss");
+    result.split4 = moment(result.split4, "mm:ss");
+
+    result.split2 = result.split2.subtract('minutes', result.split1.minutes()).subtract('seconds', result.split1.seconds());
+    if(result.split3 != null)
+      result.split3 = result.split3.subtract('minutes', result.split2.minutes()).subtract('seconds', result.split2.seconds());
+    if(result.split4 != null)
+      result.split4 = result.split4.subtract('minutes', result.split3.minutes()).subtract('seconds', result.split3.seconds());
+    
+    result.split1 = result.split1.format("mm:ss");
+    if(result.split2 != null)
+      result.split2 = result.split2.format("mm:ss");
+    else
+      result.split2 = "";
+    if(result.split3 != null)
+      result.split3 = result.split3.format("mm:ss");
+    else
+      result.split3 = "";
+    if(result.split4 != null)
+     result.split4 = result.split4.format("mm:ss");
+    else
+     result.split4 = "";
+    
+    console.log(result);
+    return;
+  }
+  
+  if($("#split1").val() == "" || result.event == "" || result.runner == "")
     return;
   
   var data = {data : JSON.stringify(result)};
@@ -148,7 +180,6 @@ function listAllResults() {
 }
 
 function splitTimeFormat(event){
-  console.log(event);
   if(event.target.value.length == 2 && event.keyCode != 8){
     event.target.value += ':';
   }

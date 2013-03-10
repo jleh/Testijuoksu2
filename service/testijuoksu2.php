@@ -23,6 +23,8 @@ if($param == "runner")
     list_runner_times($_REQUEST['runnerId']);
 if($param == "allResults")
     list_all_results();
+if($param == "getRecords")
+    get_records();
 
 /**
  * Lists all events from newest to oldest.
@@ -252,5 +254,9 @@ function list_all_results(){
     }
     
     echo json_encode($list);
+}
+
+function get_records() {
+    
 }
 ?>
