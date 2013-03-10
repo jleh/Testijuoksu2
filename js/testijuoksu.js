@@ -8,6 +8,8 @@ $(document).ready(function() {
   $("#listAllResults").click(function() { listAllResults(); return false; });
   $("#addResultsLink").click(function() { showResultAdd(); return false; });
   $("#closeForm").click(function() { hideResultAdd(); return false; });
+  $("#showRecords").click(function() { loadRecordsList(); return false; });
+  
   $(".splitTimeInput").keypress(function(e) { splitTimeFormat(e); });
   
   $(document).ajaxError(function (e) {
@@ -213,4 +215,11 @@ function showResultAdd() {
 
 function hideResultAdd() {
   $("#forms").slideUp();
+}
+
+function loadRecordsList() {
+  $.getJSON("service/testijuoksu2.php?query=getRecords", function(data) {
+    var html = Mustache.render($("#records").html(), data);
+    $("#results").html(html);
+  });
 }

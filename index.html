@@ -24,6 +24,7 @@
       </div>
       
       <a href="#" id="listAllResults" class="menuitem">Kaikki tulokset</a>
+      <a href="#" id="showRecords" class="menuitem">Ennätykset</a>
       <a href="#" id="addResultsLink" class="menuitem">Lisää tuloksia</a>
     </div>
     
@@ -181,14 +182,27 @@
       
       <div id="records">
         <h2>Ennätyksiä</h2>
-        <strong>Nopein 3 kierrosta:</strong> {{name3}} {{time3}} {{date3}}<br>
-        <strong>Nopein 2 kierrosta:</strong> {{name2}} {{time2}} {{date2}}<br>
-        <strong>Nopein 1 kierrosta:</strong> {{name1}} {{time1}} {{date1}}<br>
+        {{#fastest3}}
+          <strong>Nopein 3 kierrosta:</strong> {{name}} <strong> {{time}}</strong> {{event_date}}<br>
+        {{/fastest3}}
+        {{#fastest2}}
+          <strong>Nopein 2 kierrosta:</strong> {{name}} <strong>{{time}}</strong> {{event_date}}<br>
+        {{/fastest2}}
+        {{#fastest1}}
+          <strong>Nopein 1 kierrosta:</strong> {{name}} <strong>{{time}}</strong> {{event_date}}<br>
+        {{/fastest1}}
         
         <h2>TOP 10 enitien juoksukertoja</h2>
+        <ol>
         {{#top10}}
-          {{name}}
+          <li>{{name}} {{events}}</li>
         {{/top10}}
+        </ol>
+        
+        <h2>Eniten jengiä</h2>
+        {{#mostRunners}}
+          {{event_date}} <strong>{{runners}}</strong> kpl<br>
+        {{/mostRunners}}
       </div>
       
     </div>

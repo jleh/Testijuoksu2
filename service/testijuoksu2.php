@@ -272,6 +272,94 @@ function list_all_results(){
 }
 
 function get_records() {
+    $results = array(
+        "top10" => get_top_10(),
+        "mostRunners" => get_most_runners(),
+        "fastest3" => get_fastest_time(3),
+        "fastest2" => get_fastest_time(2),
+        "fastest1" => get_fastest_time(1)
+    );
     
+    echo json_encode($results);
+}
+
+/**
+ * Returns ordered list of 10 runners with most events participated.
+ * @return type
+ */
+function get_top_10() {
+    include('yhteys.php');
+    $sql = "SELECT name, COUNT(event) as events FROM (
+                SELECT DISTINCT name, event FROM `testijuoksu2_split`
+                LEFT JOIN testijuoksu2_runner ON testijuoksu2_split.runner=testijuoksu2_runner.id
+                WHERE 1
+            ) AS T
+            GROUP BY name
+            ORDER BY events DESC
+            LIMIT 10";
+    $query = $yhteys->prepare($sql);
+    $query->execute();
+    
+    $list;
+    while($row = $query->fetch()){
+        $list[] = array(
+            "name" => $row['name'],
+            "events" => $row['events']
+        );
+    }
+    
+    return $list;
+}
+
+/**
+ * Returns 3 events with most runners.
+ * @return type
+ */
+function get_most_runners() {
+    include 'yhteys.php';
+    $sql = "SELECT DATE_FORMAT( event_date, '%d.%m.%Y' ) as event_date, event, COUNT(runner) as runners FROM (
+                SELECT DISTINCT runner, event, event_date FROM `testijuoksu2_split`
+                LEFT JOIN testijuoksu2_event ON testijuoksu2_split.event=testijuoksu2_event.id
+                WHERE 1
+             ) AS T
+             GROUP BY event
+             ORDER BY runners DESC
+             LIMIT 3";
+    $query = $yhteys->prepare($sql);
+    $query->execute();
+    
+    $list;
+    while($row = $query->fetch()){
+        $list[] = array(
+            "event_date" => $row['event_date'],
+            "runners" => $row['runners']
+        );
+    }
+    
+    return $list;
+}
+
+function get_fastest_time($rounds) {
+    include 'yhteys.php';
+    $sql = "SELECT name, 
+             TIME_FORMAT( SEC_TO_TIME( time ), '%i:%s' ) AS time, 
+             event_date  
+            FROM (
+             SELECT COUNT(split_number) AS rounds, runner, event, name, 
+             SUM( TIME_TO_SEC( split_time ) ) AS time, 
+             DATE_FORMAT( event_date, '%d.%m.%Y' ) AS event_date
+             FROM testijuoksu2_split
+             LEFT JOIN testijuoksu2_runner ON testijuoksu2_split.runner = testijuoksu2_runner.id
+             LEFT JOIN testijuoksu2_event ON testijuoksu2_split.event = testijuoksu2_event.id
+             GROUP BY event, runner
+             ORDER BY runner
+            ) AS T
+            WHERE rounds = ?
+            ORDER BY time ASC
+            LIMIT 1";
+    $query = $yhteys->prepare($sql);
+    $query->execute(array($rounds));
+    
+    return $query->fetch();
 }
 ?>
