@@ -6,9 +6,12 @@ $(document).ready(function() {
   $("#addEventButton").click(function() { addEvent(); });
   $("#addResultButton").click(function() { addResult(); });
   $("#listAllResults").click(function() { listAllResults(); return false; });
+  $("#addResultsLink").click(function() { showResultAdd(); return false; });
+  $("#closeForm").click(function() { hideResultAdd(); return false; });
   $(".splitTimeInput").keypress(function(e) { splitTimeFormat(e); });
   
   $(document).ajaxError(function (e) {
+    alert('Toiminto ei onnistunut');
     console.log(e);
   });
 });
@@ -76,7 +79,8 @@ function renderResults(data, $template) {
 function addRunner() {
   var runner = {
     name: $("#runnerName").val(),
-    sex: $("#runnerSex").val()
+    sex: $("#runnerSex").val(),
+    password: $("#password").val()
   };
   
   // Clear value
@@ -84,8 +88,7 @@ function addRunner() {
   
   if(runner.name != ""){
     $.post("service/testijuoksu2.php?query=addRunner", runner, function(response){
-      var res = JSON.parse(response);
-      $("#statusText").html(res.name + " lisätty kantaan");
+      $("#statusText").html(response.name + " lisätty kantaan");
       loadRunnerList();
     });
   }
@@ -102,7 +105,7 @@ function addEvent(){
   var arr = $("#eventDate").val().split(".");
   var day = arr[2] + "-" + arr[1] + "-" + arr[0];
   
-  var post = {day: day};
+  var post = {day: day, password: $("#password").val()};
   
   $.post("service/testijuoksu2.php?query=addEvent", post, function(response){
     $("#statusTextEvent").html(day + " lisätty kantaan");
@@ -120,7 +123,8 @@ function addResult() {
     split1: $("#split1").val(),
     split2: $("#split2").val(),
     split3: $("#split3").val(),
-    split4: $("#split4").val()
+    split4: $("#split4").val(),
+    password: $("#password").val()
   };
   
   // If times are given in cumulative form, do handling here
@@ -183,4 +187,12 @@ function splitTimeFormat(event){
   if(event.target.value.length == 2 && event.keyCode != 8){
     event.target.value += ':';
   }
+}
+
+function showResultAdd() {
+  $("#forms").slideDown();
+}
+
+function hideResultAdd() {
+  $("#forms").slideUp();
 }

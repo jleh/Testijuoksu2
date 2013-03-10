@@ -13,18 +13,45 @@ if($param == "eventresults")
     list_results($_REQUEST['eventId']);
 if($param == "runners")
     list_runners();
-if($param == "addRunner")
-    add_runner($_REQUEST['name'], $_REQUEST['sex']);
-if($param == "addEvent")
-    add_event($_REQUEST['day']);
-if($param == "addResult")
-    add_result($_REQUEST['data']);
 if($param == "runner")
     list_runner_times($_REQUEST['runnerId']);
 if($param == "allResults")
     list_all_results();
 if($param == "getRecords")
     get_records();
+
+// Edit calls
+if(isset($_REQUEST['password'])){
+    if(!checkPassword($_REQUEST['password']))
+        die("Authentication failure");
+    
+    if($param == "addRunner")
+        add_runner($_REQUEST['name'], $_REQUEST['sex']);
+    if($param == "addEvent")
+        add_event($_REQUEST['day']);
+    if($param == "addResult")
+        add_result($_REQUEST['data']);
+}
+
+/**
+ * Checks that password is correct.
+ * @param type $pass
+ * @return boolean
+ */
+function checkPassword($pass) {
+    include('yhteys.php');
+    $sql = "SELECT value FROM testijuoksu2_options WHERE testijuoksu2_options.option = 'password'";
+    $query = $yhteys->prepare($sql);
+    $query->execute();
+    
+    $correct = $query->fetch();
+    
+    if($correct[0] == $pass){
+        return true;
+    } else {
+        return false;
+    }
+}
 
 /**
  * Lists all events from newest to oldest.

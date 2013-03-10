@@ -33,7 +33,11 @@ a:visited {
 
 #forms {
   position: absolute;
-  bottom: 2em;
+  bottom: 0em;
+  border: 1px solid;
+  padding: 2em;
+  box-shadow: 0 0 11px 5px;
+  display: none;
 }
 
 .resultRow {
