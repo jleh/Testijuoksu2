@@ -98,6 +98,7 @@
       </div>
       
       <div id="eventResults">
+        <h2>Miehet</h2>
         <div class="resultRow">
           <div class="resultCell header">Nimi</div>
           <div class="resultCell header time">Aika</div>
@@ -105,7 +106,7 @@
           <div class="resultCell header">Kierros 2</div>
           <div class="resultCell header">Kierros 3</div>
         </div>
-        {{#results}}
+        {{#man}}
           <div class="resultRow">
             <div class="resultCell">{{name}}</div>
             <div class="resultCell"><strong>{{total_time}}</strong></div>
@@ -114,7 +115,26 @@
             {{/splits}}
             <div class="resultCell"><strong>{{pace}} min/km</strong></div>
           </div>
-        {{/results}}
+        {{/man}}
+        
+        <h2>Naiset</h2>
+        <div class="resultRow">
+          <div class="resultCell header">Nimi</div>
+          <div class="resultCell header time">Aika</div>
+          <div class="resultCell header">Kierros 1</div>
+          <div class="resultCell header">Kierros 2</div>
+          <div class="resultCell header">Kierros 3</div>
+        </div>
+        {{#women}}
+          <div class="resultRow">
+            <div class="resultCell">{{name}}</div>
+            <div class="resultCell"><strong>{{total_time}}</strong></div>
+            {{#splits}}
+              <div class="resultCell">{{time}}</div>
+            {{/splits}}
+            <div class="resultCell pace"><strong>{{pace}} min/km</strong></div>
+          </div>
+        {{/women}}
       </div>
       
       <div id="runnerResults">
@@ -132,7 +152,7 @@
             {{#splits}}
               <div class="resultCell">{{time}}</div>
             {{/splits}}
-            <div class="resultCell"><strong>{{pace}} min/km</strong></div>
+            <div class="resultCell pace"><strong>{{pace}} min/km</strong></div>
           </div>
         {{/results}}
       </div>
@@ -154,7 +174,7 @@
             {{#splits}}
               <div class="resultCell">{{time}}</div>
             {{/splits}}
-            <div class="resultCell"><strong>{{pace}} min/km</strong></div>
+            <div class="resultCell pace"><strong>{{pace}} min/km</strong></div>
           </div>
         {{/results}}
       </div>

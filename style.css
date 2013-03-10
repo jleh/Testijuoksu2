@@ -38,6 +38,8 @@ a:visited {
   padding: 2em;
   box-shadow: 0 0 11px 5px;
   display: none;
+  z-index: 1;
+  background-color: white;
 }
 
 .resultRow {

@@ -29,9 +29,9 @@ if(isset($_REQUEST['password'])){
         add_runner($_REQUEST['name'], $_REQUEST['sex']);
     if($param == "addEvent")
         add_event($_REQUEST['day']);
-    if($param == "addResult")
-        add_result($_REQUEST['data']);
 }
+if($param == "addResult")
+    add_result($_REQUEST['data']);
 
 /**
  * Checks that password is correct.
@@ -179,6 +179,9 @@ function add_result($data){
     $result = json_decode(str_replace('\"', '"', $data));
     $runner = $result->runner;
     $event = $result->event;
+    
+    if(!checkPassword($result->password))
+        die('Authentication failure!');
     
     add_split($runner, $event, 1, "00:".$result->split1);
     

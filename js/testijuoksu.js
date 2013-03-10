@@ -50,7 +50,7 @@ function changeRunner(){
 
 function loadEventResults(id){
   $.getJSON("service/testijuoksu2.php?query=eventresults&eventId=" + id, function(data){
-    renderResults(data, $("#eventResults"));
+    renderResults(data, $("#eventResults"), true);
     // Save loaded data
     resultData = data;
   });
@@ -58,7 +58,7 @@ function loadEventResults(id){
 
 function loadRunnerResults(id){
   $.getJSON("service/testijuoksu2.php?query=runner&runnerId=" + id, function(data){
-    renderResults(data, $("#runnerResults"));
+    renderResults(data, $("#runnerResults"), false);
     // Save loaded data
     resultData = data;
   });
@@ -66,12 +66,30 @@ function loadRunnerResults(id){
 
 /**
  * Render result table from given data to selected template.
+ * Parses man and women separate lists, if asked.
  * @param {type} data
  * @param {type} $template
+ * @param {boolean} split
  * @returns {undefined}
  */
-function renderResults(data, $template) {
-  var result = {results: data};
+function renderResults(data, $template, split) {
+  var result = {};
+  
+  if(split) {
+    var man = [];
+    var women = [];
+
+    for(var i = 0; i < data.length; i++){
+      if(data[i].sex == 'M')
+        man.push(data[i]);
+      else
+        women.push(data[i]);
+    }
+    result = {man: man, women: women};
+  } else {
+    result = {results: data};
+  }
+
   var html = Mustache.render($template.html(), result);
   $("#results").html(html);
 }
@@ -177,7 +195,7 @@ function addResult() {
 
 function listAllResults() {
   $.getJSON("service/testijuoksu2.php?query=allResults", function(data){
-    renderResults(data, $("#allResults"));
+    renderResults(data, $("#allResults"), false);
     // Save loaded data
     resultData = data;
   });
