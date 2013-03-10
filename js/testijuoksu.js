@@ -7,6 +7,10 @@ $(document).ready(function() {
   $("#addResultButton").click(function() { addResult(); });
   $("#listAllResults").click(function() { listAllResults(); return false; });
   $(".splitTimeInput").keypress(function(e) { splitTimeFormat(e); });
+  
+  $(document).ajaxError(function (e) {
+    console.log(e);
+  });
 });
 
 var resultData;
@@ -146,9 +150,6 @@ function addResult() {
      result.split4 = result.split4.format("mm:ss");
     else
      result.split4 = "";
-    
-    console.log(result);
-    return;
   }
   
   if($("#split1").val() == "" || result.event == "" || result.runner == "")
@@ -165,8 +166,7 @@ function addResult() {
     $("#split3").val("");
     $("#split4").val("");
     
-    $("#view select").val('');
-    $("#view select").val(result.event);
+    loadEventResults($("#view select").val());
   });
 }
 

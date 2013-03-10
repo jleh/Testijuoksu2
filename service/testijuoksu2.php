@@ -59,7 +59,7 @@ function list_results($event_id){
             LEFT JOIN testijuoksu2_runner ON testijuoksu2_split.runner=testijuoksu2_runner.id
             WHERE event = ?
             GROUP BY runner
-            ORDER BY roundSum desc, time desc";
+            ORDER BY roundSum DESC, time ASC";
     $query = $yhteys->prepare($sql);
     $query->execute(array($event_id));
     
@@ -152,6 +152,8 @@ function add_result($data){
     if($result->split4 != ""){
         add_split($runner, $event, 4, "00:".$result->split4);
     }
+    
+    echo json_encode(array("ok" => "ok"));
 }
 
 function add_split($runner, $event, $splitn, $time) {
