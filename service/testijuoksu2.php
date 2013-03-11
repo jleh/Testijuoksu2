@@ -238,6 +238,7 @@ function list_runner_times($runner_id){
         }
         
         $list[] = array(
+            "name" => $row['name'],
             "event" => $row['event_date_formatted'],
             "time_in_sec" => $row['time'],
             "total_time" => $total_time,

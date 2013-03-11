@@ -1,13 +1,15 @@
 /* Testijuoksu2 - Running result statistics.
  * Karttalehtinen 2013
  * 
- * Dependencies: jQuery, Mustache.js, Moment.js
+ * Dependencies: jQuery, Mustache.js, Moment.js, Backbone.js
  */
 
 var tj2 = {};
+var router;
 
 $(document).ready(function() {
   tj2.Functions.initialize();
+  initializeRoutes();
 });
 
 /**
@@ -31,10 +33,10 @@ tj2.Functions = function() {
     $("#addRunnerButton").click(function() { addRunner(); });
     $("#addEventButton").click(function() { addEvent(); });
     $("#addResultButton").click(function() { addResult(); });
-    $("#listAllResults").click(function() { tj2.Render.listAllResults(); return false; });
+    $("#listAllResults").click(function() { router.navigate("allResults", {trigger: true}); return false; });
     $("#addResultsLink").click(function() { showResultAdd(); return false; });
     $("#closeForm").click(function() { hideResultAdd(); return false; });
-    $("#showRecords").click(function() { tj2.Render.loadRecordsList(); return false; });
+    $("#showRecords").click(function() { router.navigate("records", {trigger: true}); return false; });
 
     $(".splitTimeInput").keypress(function(e) { splitTimeFormat(e); });
 
@@ -59,7 +61,8 @@ tj2.Functions = function() {
   }
 
   function changeEvent(){
-    tj2.Render.loadEventResults($("#view select").val());
+    var eventId = $("#view select").val();
+    router.navigate("event/" + eventId, {trigger: true});
   }
 
   /**
@@ -77,7 +80,8 @@ tj2.Functions = function() {
   }
 
   function changeRunner(){
-    tj2.Render.loadRunnerResults($("#runners select").val());
+    var runnerId = $("#runners select").val();
+    router.navigate("runner/" + runnerId, {trigger: true});
   }
 
   function addRunner() {
@@ -213,7 +217,11 @@ tj2.Render = function(){
    */
   function loadEventResults(eventId){
     $.getJSON("service/testijuoksu2.php?query=eventresults&eventId=" + eventId, function(data){
-      renderResults(data, $("#eventResults"), true);
+      var title = "";
+      if(data.length > 0){
+        title = data[0].event;
+      }
+      renderResults(data, $("#eventResults"), true, title);
     });
   }
 
@@ -223,7 +231,11 @@ tj2.Render = function(){
    */
   function loadRunnerResults(runnerId){
     $.getJSON("service/testijuoksu2.php?query=runner&runnerId=" + runnerId, function(data){
-      renderResults(data, $("#runnerResults"), false);
+      var title = "";
+      if(data.length > 0){
+        title = data[0].name;
+      }
+      renderResults(data, $("#runnerResults"), false, title);
     });
   }
   
@@ -242,7 +254,7 @@ tj2.Render = function(){
    */
   function listAllResults() {
     $.getJSON("service/testijuoksu2.php?query=allResults", function(data){
-      renderResults(data, $("#allResults"), false);
+      renderResults(data, $("#allResults"), false, "");
     });
   }
 
@@ -252,9 +264,10 @@ tj2.Render = function(){
    * @param {type} data Result data
    * @param {type} $template Template to render as jQuery object
    * @param {boolean} split True if different results for man and women.
+   * @param {String} title Title for result list.
    * @returns {undefined}
    */
-  function renderResults(data, $template, split) {
+  function renderResults(data, $template, split, title) {
     var result = {};
 
     if(split) {
@@ -267,9 +280,9 @@ tj2.Render = function(){
         else
           women.push(data[i]);
       }
-      result = {man: man, women: women};
+      result = {man: man, women: women, title: title};
     } else {
-      result = {results: data};
+      result = {results: data, title: title};
     }
 
     var html = Mustache.render($template.html(), result);
@@ -284,3 +297,37 @@ tj2.Render = function(){
   };
   
 }();
+
+/**
+ * Routest for linking results.
+ */
+function initializeRoutes() {
+  var TJ2Router = Backbone.Router.extend({
+    
+    routes: {
+      "runner/:runnerId" : "runner",
+      "event/:eventId" : "event",
+      "allResults" : "allResults",
+      "records" : "records"
+    },
+    
+    runner: function(runnerId) {
+      tj2.Render.loadRunnerResults(runnerId);
+    },
+    
+    event: function(eventId) {
+      tj2.Render.loadEventResults(eventId);
+    },
+            
+    allResults: function() {
+      tj2.Render.listAllResults();
+    },
+            
+    records: function() {
+      tj2.Render.loadRecordsList();
+    }
+  });
+  
+  router = new TJ2Router();
+  Backbone.history.start();
+}
